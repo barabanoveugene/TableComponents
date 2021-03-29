@@ -98,14 +98,11 @@ export const TableData: React.FC<Props> = (props) => {
     });
   };
 
-  // eslint-disable-next-line consistent-return
   const selectIcon = (type: ColumnType) => {
     if (type === ColumnType.search) {
       return iconSearch;
     }
-    if (type === ColumnType.checkBox) {
-      return iconTriangleDown;
-    }
+    return iconTriangleDown;
   };
   return (
     <table>
