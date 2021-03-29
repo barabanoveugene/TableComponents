@@ -109,8 +109,7 @@ export const TableData: React.FC<Props> = (props) => {
       <thead>
         <tr>
           {strTableData.map((item, i) => (
-            // eslint-disable-next-line react/jsx-key
-            <td className="td__table">
+            <td key={item.id} className="td__table">
               <HeadingColumn
                 key={item.id}
                 handlerClick={() => handlerClick(item.id)}
