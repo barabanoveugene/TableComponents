@@ -1,0 +1,14 @@
+.container {
+    border: 2px solid #000000;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+/* .cellSelection {
+    position: absolute;
+} */
+
+.tb__table {
+    position: absolute;
+}

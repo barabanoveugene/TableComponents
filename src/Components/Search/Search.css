@@ -1,0 +1,20 @@
+.wrap-input {
+    width: 180px;
+    height: 32px;
+    border: 1px solid #6C757D;
+    position: absolute;
+    top: 0;
+    left: auto;
+
+}
+.search-input {
+    width: 180px;
+    height: 32px;
+    border-radius: 3px;
+    color: #000000;
+    font: 400 16px 'Work Sans', sans-serif; 
+}
+input::placeholder {
+    color: #000000;
+    font: 400 16px 'Work Sans', sans-serif;
+}

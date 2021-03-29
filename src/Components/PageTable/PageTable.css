@@ -1,0 +1,7 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+table tr td {
+  border: 2px solid #000;
+}
