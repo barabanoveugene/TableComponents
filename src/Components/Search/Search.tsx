@@ -1,13 +1,31 @@
-import React from "react";
+import React from 'react';
 
-import "./Search.css";
+import './Search.css';
 
-export const Search = () => (
-    <div className="wrap-input">
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Текст поиска"
-       />
-    </div>
+export type CusSearch = {
+  value: string;
+  id: string;
+};
+
+interface ICusSearch {
+  fields: CusSearch;
+  onChange: (value: string, id: string) => void;
+}
+
+export const CustomSearch: React.FC<ICusSearch> = ({
+  fields,
+  onChange,
+}: ICusSearch) => {
+  const onInput = (e: React.FormEvent<HTMLInputElement>) => {
+    onChange(e.currentTarget.value, e.currentTarget.id);
+  };
+
+  return (
+    <input
+      className="search-input"
+      value={fields.value}
+      id={fields.id}
+      onChange={onInput}
+    />
   );
+};

@@ -1,109 +1,175 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { HeadingColumn } from '../Heading-Column/HeadingColumn';
 import iconSearch from '../../image/svg/search.svg';
 import iconTriangleDown from '../../image/svg/triangleDown.svg';
-import { Cell } from '../Cell/Cell';
 import './TableData.css';
-// eslint-disable-next-line import/no-cycle
-import { PopUpVisibleSearchCheckbox } from '../PopUpVisibleSearchCheckbox/PopUpVisibleSearchCheckbox';
+import { CustomCheckbox, CusCheckbox } from '../Custom-Checkbox/CustomCheckbox';
+import { PopUp } from '../PopUp/popup';
+import { CusSearch, CustomSearch } from '../Search/Search';
 
-// eslint-disable-next-line @typescript-eslint/comma-dangle
 export enum ColumnType {
   search,
-  checkBox,
+  checkBox
 }
 
-type CheckBox = {
-  title: string;
-  value: boolean;
-};
-
-export type StrTable = {
-  // ??
+type StrTableCommon = {
   title: string;
   id: string;
-  type: ColumnType;
-  valueInput?: string | Array<CheckBox>;
+  dataKey: string;
 };
 
-interface Props {
+type StrTableFieldsSearch = {
+  type: ColumnType.search;
+  fieldsSearch: CusSearch;
+};
+
+type StrTableFieldsCheckbox = {
+  type: ColumnType.checkBox;
+  fieldsCheckbox: CusCheckbox[];
+};
+
+/* Example */
+type ItemFields = {
+  name: string;
+  norm: string;
+};
+
+type ItemTableData = {
+  name: string;
+  fields: ItemFields[];
+};
+
+export type DataTable = ItemTableData[];
+/* End Example */
+
+export type StrTable = StrTableCommon &
+  (StrTableFieldsSearch | StrTableFieldsCheckbox);
+
+export interface ITableData {
   strTableData: StrTable[];
+  // dataArr: DataTable;
 }
 
-export type Popup = {
-  //
+type Popup = {
   id: string;
   visible: boolean;
   type: ColumnType;
-  stateCheck?: Array<boolean>;
 };
 
-export interface StatePopup {
-  //
+type StatePopup = {
   itemsPopup: Popup[];
-}
-
-type TtnItem = {
-  id: string;
-  ind_TTN: string;
-  customer: string;
-  name_recipe: string;
-  v_product: number;
 };
 
-interface ITtnTable {
-  itemsTableTtn: TtnItem[];
-}
-
-export const TableData: React.FC<Props> = (props) => {
-  const { strTableData } = props;
-
-  const [stateTableTtn, setStateTableTtn] = useState<ITtnTable>({
-    itemsTableTtn: [],
-  });
-
-  useEffect(() => {
-    const data = async () => {
-      const ttnData = await (
-        await fetch('http://178.159.39.75:3000/ttns')
-      ).json();
-      setStateTableTtn({ ...stateTableTtn, itemsTableTtn: ttnData });
-    };
-    data();
-  }, []);
-
-  const [isPopup, setIsSearch] = useState<StatePopup>({
-    //
-    itemsPopup: strTableData.map((item) => ({
-      id: item.id,
-      visible: false,
-      type: item.type,
-    })),
-  });
-
-  const handlerClick = (idElem: string) => {
-    const { itemsPopup: itemPopup } = isPopup;
-
-    setIsSearch({
-      ...isPopup,
-      itemsPopup: itemPopup.map((item) => {
-        // eslint-disable-next-line no-param-reassign
-        item.visible = item.id === idElem ? !item.visible : false;
-        return {
-          id: item.id,
-          visible: item.visible,
-          type: item.type,
-        };
-      }),
-    });
-  };
-
+export const TableData: React.FC<ITableData> = ({ strTableData }) => {
   const selectIcon = (type: ColumnType) => {
     if (type === ColumnType.search) {
       return iconSearch;
     }
     return iconTriangleDown;
   };
+
+  /* useEffect */
+  const [dataRequest, setDataRequest] = useState([]);
+
+  useEffect(() => {
+    const getResponse = async () => {
+      const response = await (
+        await fetch('/api/normative-documents?page=1')
+      ).json();
+      setDataRequest(response);
+    };
+    getResponse();
+  }, []);
+
+  // Visible PopUp
+  const [isPopup, setIsSearch] = useState<StatePopup>({
+    itemsPopup: strTableData.map((item) => ({
+      id: item.id,
+      visible: false,
+      type: item.type
+    }))
+  });
+
+  const handlerClickIcon = (idElem: string) => {
+    const itemsPopup = isPopup.itemsPopup.map((item) => {
+      const itemItemsPopup = item; /* add variable */
+      itemItemsPopup.visible = item.id === idElem ? !item.visible : false;
+      return {
+        id: item.id,
+        visible: itemItemsPopup.visible,
+        type: item.type
+      };
+    });
+
+    setIsSearch({
+      ...isPopup,
+      itemsPopup
+    });
+  };
+
+  // Search
+  const [stateSearchFields, setStateSearchFields] = useState<CusSearch[]>(
+    strTableData.map((item) => {
+      if (item.type === ColumnType.search) {
+        return item.fieldsSearch;
+      }
+      return { value: '', id: '' };
+    })
+  );
+
+  const onChangeFieldsSearch = (value: string, id: string) => {
+    const newState = stateSearchFields.map((fields) => {
+      if (fields.id === id) {
+        return { ...fields, value };
+      }
+      return fields;
+    });
+    setStateSearchFields(newState);
+  };
+
+  const renderSearch = (fields: CusSearch): ReactNode => (
+    <CustomSearch fields={fields} onChange={onChangeFieldsSearch} />
+  );
+
+  // Checkbox
+  const [stateCheckboxFields, setStateCheckboxFields] = useState<
+    CusCheckbox[][]
+  >(
+    strTableData.map((item) => {
+      if (item.type === ColumnType.checkBox) {
+        return item.fieldsCheckbox;
+      }
+      return [{ checked: false, title: '', id: '' }];
+    })
+  );
+
+  const onChangeFieldsCheckbox = (id: string, checked: boolean) => {
+    const newStateCheckbox = stateCheckboxFields.map((fields) => {
+      const itemFields = fields.map((field) => {
+        if (field.id === id) {
+          return {
+            id: field.id,
+            title: field.title,
+            checked: !field.checked
+          };
+        }
+        return field;
+      });
+      return itemFields;
+    });
+    setStateCheckboxFields(newStateCheckbox);
+  };
+
+  const renderCheckbox = (checkboxes: CusCheckbox[]): ReactNode =>
+    checkboxes.map((checkbox) => (
+      <CustomCheckbox
+        key={checkbox.id}
+        checked={checkbox.checked}
+        title={checkbox.title}
+        onChange={() => onChangeFieldsCheckbox(checkbox.id, checkbox.checked)}
+      />
+    ));
+
   return (
     <table>
       <thead>
@@ -112,33 +178,42 @@ export const TableData: React.FC<Props> = (props) => {
             <td key={item.id} className="td__table">
               <HeadingColumn
                 key={item.id}
-                handlerClick={() => handlerClick(item.id)}
+                handlerClick={() => handlerClickIcon(item.id)}
                 icon={String(selectIcon(item.type))}
                 text={item.title}
               />
 
               {isPopup.itemsPopup[i].visible ? (
-                <PopUpVisibleSearchCheckbox
-                  key={`Popup${isPopup.itemsPopup[i].id}`}
-                  type={isPopup.itemsPopup[i].type}
-                />
+                <PopUp>
+                  {item.type === ColumnType.checkBox
+                    ? renderCheckbox(stateCheckboxFields[i])
+                    : null}
+                  {item.type === ColumnType.search
+                    ? renderSearch(stateSearchFields[i])
+                    : null}
+                </PopUp>
               ) : null}
             </td>
           ))}
         </tr>
       </thead>
       <tbody>
-        <tr>
-          {stateTableTtn.itemsTableTtn.map((item: TtnItem) => (
-            <Cell
-              key={item.id}
-              indTtn={item.ind_TTN}
-              customer={item.customer}
-              nameRecipe={item.name_recipe}
-              vProduct={item.v_product}
-            />
-          ))}
-        </tr>
+        {/* {pageState.members.map((item) => {
+          const tr = item.fields.map((field, i) => {
+            let name = null;
+            if (i === 0) {
+              name = <td rowSpan={item.fields.length}>{item.name}</td>;
+            }
+            return (
+              <tr key={field.id}>
+                {name}
+                <td>{field.name}</td>
+                <td>{field.norm}</td>
+              </tr>
+            );
+          });
+          return tr;
+        })} */}
       </tbody>
     </table>
   );

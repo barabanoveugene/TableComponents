@@ -14,6 +14,7 @@
     },
     "rules": {
       "no-console":"off",
+      "no-debugger": "off",
       "no-alert":"off", 
       "object-curly-spacing": ["warn", "always"],
       "no-unused-vars": [
@@ -31,9 +32,9 @@
         }
       ],
       "@typescript-eslint/no-explicit-any": [
-        "error",
+        "off",
         {
-          "ignoreRestArgs": true
+          "ignoreRestArgs": false
         }
       ],
       "max-len": [

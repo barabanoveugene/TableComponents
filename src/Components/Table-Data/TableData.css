@@ -1,8 +1,8 @@
 .container {
-    border: 2px solid #000000;
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
+  border: 2px solid #000000;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
 }
 
 /* .cellSelection {
@@ -10,5 +10,21 @@
 } */
 
 .tb__table {
-    position: absolute;
+  position: absolute;
+}
+
+tr {
+  border: 2px solid #000;
+}
+
+th {
+  border: 2px solid #000;
+}
+
+td {
+  border: 2px solid #000;
+}
+
+table {
+  border: 2px solid #000;
 }

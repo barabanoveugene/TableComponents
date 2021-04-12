@@ -1,20 +1,33 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import React from "react";
+import React from 'react';
 
-import "./CustomCheckbox.css";
+import './CustomCheckbox.css';
 
-export type StrBoxCheckbox ={
+export type CusCheckbox = {
+  checked: boolean;
   title: string;
   id: string;
+};
+
+interface ICusCheckbox {
+  checked: boolean;
+  title: string;
+  onChange: () => void;
 }
 
-export const CustomCheckbox: React.FC = () => (
-    <>
-      <div className="customCheckbox">
-        <div>
-          <input id="cusCheckbox" type="checkbox" />
-          <label htmlFor="cusCheckbox">Some text</label>
-        </div>
-      </div>
-    </>
-  );
+export const CustomCheckbox: React.FC<ICusCheckbox> = ({
+  checked,
+  title,
+  onChange,
+}: ICusCheckbox) => (
+  <>
+    <label htmlFor="cusCheckbox">
+      <input
+        className="cusCheckbox"
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+      />
+      {title}
+    </label>
+  </>
+);

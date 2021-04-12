@@ -25,6 +25,7 @@ export const PageTable = () => {
       const data = await (
         await fetch('/api/normative-documents?page=3')
       ).json();
+      console.log(data);
       const members: TableItemData[] = data['hydra:member'];
       members.forEach((member) => {
         member.fields.reverse();
@@ -33,7 +34,6 @@ export const PageTable = () => {
     };
     setPageStateFromFetch();
   }, []);
-  console.log(pageState);
 
   return (
     <div className="wrapper">

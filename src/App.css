@@ -7,3 +7,18 @@
   margin: 0;
   padding: 0;
 }
+tr {
+  border: 2px solid #000;
+}
+
+th {
+  border: 2px solid #000;
+}
+
+td {
+  border: 2px solid #000;
+}
+
+table {
+  border: 2px solid #000;
+}
